@@ -1,0 +1,614 @@
+[
+    {
+        "id": "tab_mixer_kpi",
+        "type": "tab",
+        "label": "Mixer KPI",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "inj_init",
+        "type": "inject",
+        "z": "tab_mixer_kpi",
+        "name": "Initialize Settings",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "once": true,
+        "onceDelay": 0.2,
+        "topic": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "fn_store_settings"
+            ]
+        ]
+    },
+    {
+        "id": "fn_store_settings",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store fixed settings",
+        "func": "flow.set('settings', { N11:1, N12:415, rho:1000, kPF:0.9, pumpK:0.67 });\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_N5",
+        "type": "ui_text_input",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "label": "Viscosity (cP)  ",
+        "tooltip": "Enter liquid viscosity in cP",
+        "group": "ui_grp_kpi",
+        "order": 9,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "sendOnBlur": true,
+        "className": "kpi-input",
+        "topicType": "msg",
+        "x": 120,
+        "y": 120,
+        "wires": [
+            [
+                "e1cc3907fe48cc3f"
+            ]
+        ]
+    },
+    {
+        "id": "ui_N7",
+        "type": "ui_text_input",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "label": "Tank Volume (m³) ",
+        "tooltip": "Enter tank volume in m³",
+        "group": "ui_grp_kpi",
+        "order": 10,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "sendOnBlur": true,
+        "className": "kpi-input",
+        "topicType": "msg",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "6279c945595ab1f1"
+            ]
+        ]
+    },
+    {
+        "id": "ui_N9",
+        "type": "ui_text_input",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "label": "Propeller Diameter (m) ",
+        "tooltip": "Enter impeller diameter in meters",
+        "group": "ui_grp_kpi",
+        "order": 11,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "sendOnBlur": true,
+        "className": "kpi-input",
+        "topicType": "msg",
+        "x": 140,
+        "y": 240,
+        "wires": [
+            [
+                "a7b4812fd8bc3e4a"
+            ]
+        ]
+    },
+    {
+        "id": "ui_N14",
+        "type": "ui_text_input",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "label": "Operating Speed (rpm)",
+        "tooltip": "Enter impeller speed in rpm",
+        "group": "ui_grp_kpi",
+        "order": 13,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "sendOnBlur": true,
+        "className": "kpi-input",
+        "topicType": "msg",
+        "x": 140,
+        "y": 300,
+        "wires": [
+            [
+                "9c8abab636e0bd0a"
+            ]
+        ]
+    },
+    {
+        "id": "ui_N13",
+        "type": "ui_text_input",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "label": "Operating Current (A)",
+        "tooltip": "Enter operating current in Ampere",
+        "group": "ui_grp_kpi",
+        "order": 12,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "sendOnBlur": true,
+        "className": "kpi-input",
+        "topicType": "msg",
+        "x": 140,
+        "y": 360,
+        "wires": [
+            [
+                "d701d59835bcbbb9"
+            ]
+        ]
+    },
+    {
+        "id": "btn_calc",
+        "type": "ui_button",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "group": "ui_grp_kpi",
+        "order": 14,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "CALCULATE",
+        "tooltip": "Compute results from inputs",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "go",
+        "payloadType": "str",
+        "topic": "",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "fn_calc_excel"
+            ]
+        ]
+    },
+    {
+        "id": "fn_calc_excel",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "Excel-equivalent Calc",
+        "func": "// ---------- 固定参数 ----------\nlet s = flow.get('settings');\nif (!s) { s = { N11:1, N12:415, rho:1000, kPF:0.9, pumpK:0.67 }; flow.set('settings', s); }\n\nconst N11 = Number(s.N11);\nconst N12 = Number(s.N12);\nconst rho = Number(s.rho);\nconst kPF = Number(s.kPF);\nconst pumpK = Number(s.pumpK);\n\n// ---------- 输入 ----------\nconst N5  = Number(flow.get('N5'));   // cP\nconst N7  = Number(flow.get('N7'));   // m3\nconst N9  = Number(flow.get('N9'));   // m\nconst N14 = Number(flow.get('N14'));  // rpm\nconst N13 = Number(flow.get('N13'));  // A\n\n// 检查输入\nconst miss = [];\n[['Viscosity (cP) [N5]',N5],['Tank Volume (m3) [N7]',N7],['Impeller Diameter (m) [N9]',N9],['Operating Speed (rpm) [N14]',N14],['Operating Current (A) [N13]',N13]]\n  .forEach(([k,v])=>{ if(!isFinite(v)||v<=0) miss.push(k); });\nif (miss.length){\n  return [{ payload:{ error:'Missing/invalid: '+miss.join(', ') }}, null];\n}\n\n// ---------- 计算 ----------\nconst tip  = Math.PI * N9 * (N14/60);         // m/s\nconst p_kW = (N11 * N12 * N13 * kPF) / 1000;  // kW\nconst mu   = N5 * 0.001;                      // Pa·s\nconst Re   = (rho * (N14/60) * (N9**2)) / mu;\nconst N22  = pumpK * (N9**3) * N14 * N11;     // m3/min\nconst mixI = (4.05e-4 * N14 * ( ((N9*39.3701)**2.5) / Math.sqrt(N7*264.172) )) * N11;\n\n// 分类\nconst tpm = N22 / N7;\nlet cls = \"Violet Mixing\";\nif (tpm < 0.5)       cls = \"Weak Mixing\";\nelse if (tpm <= 1.5) cls = \"Gentle Mixing\";\nelse if (tpm <= 2.5) cls = \"Medium Mixing\";\nelse if (tpm <= 3.5) cls = \"Good Mixing\";\nelse if (tpm <= 4.5) cls = \"Strong Mixing\";\nelse if (tpm <= 5.5) cls = \"Vigorous Mixing\";\n\nconst G = Math.sqrt( (p_kW*1000) / ( (N5/1000) * N7 ) );\n\n// ---------- 格式化 ----------\nconst fmt = (n, d)=> Number.isFinite(n) ? Number(n.toFixed(d)) : n;\n\n// ---- 输出1：给文字结果(template) ----\nconst resultPayload = {\n  results: {\n    tip_speed_mps:       fmt(tip, 2),\n    power_kW:            fmt(p_kW, 3),\n    Re:                  Math.round(Re),\n    pumping_m3_min:      fmt(N22, 2),\n    mix_intensity_index: fmt(mixI, 2),\n    classification:      cls,\n    G_s_1:               fmt(G, 0)\n  }\n};\n\n// ---- 输出2：给“细长立柱条”的数据 ----\n// 这里的 max 是高度基准，你可以按现场范围再微调\nconst barsPayload = {\n  bars: [\n    { key:'tip',   label:'Tip Speed (m/s)',        unit:'',     value: fmt(tip,2),   min:0,   max:5,     color:'#49a6ff' },\n    { key:'p',     label:'Power Absorbed (kW)',    unit:'',     value: fmt(p_kW,3),  min:0,   max:5,     color:'#22c55e' },\n    { key:'re',    label:'Reynolds Number',        unit:'',     value: Math.round(Re), min:0, max:600000,color:'#f59e0b' },\n    { key:'pump',  label:'Pumping Capacity (m³/min)', unit:'',  value: fmt(N22,2),  min:0,   max:200,  color:'#ef4444' },\n    { key:'mix',   label:'Mixing Intensity ', unit:'',   value: fmt(mixI,2),  min:0,   max:5,   color:'#8b5cf6' },\n    { key:'g',     label:'Velocity Gradient G (s⁻¹)', unit:'',  value: fmt(G,0),     min:0,   max:300,   color:'#14b8a6' }\n  ],\n  classification: cls\n};\n\n// **两个输出口**：第1口给文字结果模板，第2口给 KPI Bars 模板\nreturn [{ payload: resultPayload }, { payload: barsPayload }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 3,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 480,
+        "wires": [
+            [
+                "ui_result"
+            ],
+            [
+                "94e7eef20cfd0676"
+            ]
+        ]
+    },
+    {
+        "id": "ui_result",
+        "type": "ui_template",
+        "z": "tab_mixer_kpi",
+        "group": "ui_grp_kpi",
+        "name": "Results (yellow cells)",
+        "order": 16,
+        "width": 6,
+        "height": 7,
+        "format": "<div style=\"font-size:20px; line-height:1.55;\">\n  <b>Results</b>\n  <div>Tip Speed (m/s): <b>{{msg.payload.results.tip_speed_mps}}</b></div>\n  <div>Power Absorbed (kW): <b>{{msg.payload.results.power_kW}}</b></div>\n  <div>Reynolds Number: <b>{{msg.payload.results.Re}}</b></div>\n  <div>Pumping Capacity (m³/min): <b>{{msg.payload.results.pumping_m3_min}}</b></div>\n  <div>Mixing Intensity : <b>{{msg.payload.results.mix_intensity_index}}</b></div>\n  <div>Mixing Classification: <b>{{msg.payload.results.classification}}</b></div>\n  <div>Velocity Gradient G (s⁻¹): <b style=\"font-size:20px;\">{{msg.payload.results.G_s_1}}</b></div>\n<div ng-if=\"msg.payload.error\" style=\"color:#b00020; margin-top:6px;\">\n  {{msg.payload.error}}\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 660,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e1cc3907fe48cc3f",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store N5",
+        "func": "// 接受各类输入：'1.'、' 1,234 '、空字符串等\nconst raw = (msg.payload ?? '').toString().trim().replace(/,/g, '');\nif (raw === '') return null;           // 空输入就忽略，不写入\nconst x = Number(raw);\nif (!Number.isFinite(x)) return null;  // 不是数字就忽略\nflow.set('N5', x);                     // 成功则写入 flow.N5\nreturn null;                           // 不继续往下发，避免噪声\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6279c945595ab1f1",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store N7",
+        "func": "const raw = (msg.payload ?? '').toString().trim().replace(/,/g, '');\nif (raw === '') return null;\nconst x = Number(raw);\nif (!Number.isFinite(x)) return null;\nflow.set('N7', x);\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a7b4812fd8bc3e4a",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store N9",
+        "func": "const raw = (msg.payload ?? '').toString().trim().replace(/,/g, '');\nif (raw === '') return null;\nconst x = Number(raw);\nif (!Number.isFinite(x)) return null;\nflow.set('N9', x);\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9c8abab636e0bd0a",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store N14",
+        "func": "const raw = (msg.payload ?? '').toString().trim().replace(/,/g, '');\nif (raw === '') return null;\nconst x = Number(raw);\nif (!Number.isFinite(x)) return null;\nflow.set('N14', x);\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d701d59835bcbbb9",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store N13",
+        "func": "const raw = (msg.payload ?? '').toString().trim().replace(/,/g, '');\nif (raw === '') return null;\nconst x = Number(raw);\nif (!Number.isFinite(x)) return null;\nflow.set('N13', x);\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "tpl_kpi_css_25px",
+        "type": "ui_template",
+        "z": "tab_mixer_kpi",
+        "group": "ui_grp_kpi",
+        "name": "KPI Input CSS (25px)",
+        "order": 19,
+        "width": 6,
+        "height": 1,
+        "format": "<style>\n/* 作用范围：所有带 class=\"kpi-input\" 的输入控件（你已加在 N5/N7/N9/N14/N13 上） */\n.kpi-input .nr-dashboard-textinput label,\n.kpi-input label,\n.kpi-input .md-placeholder {\n  font-size: 21px !important;\n  font-weight: 600;\n  letter-spacing: .2px;\n}\n\n.kpi-input .nr-dashboard-textinput input,\n.kpi-input input[type=\"text\"],\n.kpi-input .md-input {\n  font-size: 21px !important;\n  font-weight: 600;\n}\n</style>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "global",
+        "className": "",
+        "x": 620,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f5c290855434808c",
+        "type": "ui_template",
+        "z": "tab_mixer_kpi",
+        "group": "ui_grp_kpi",
+        "name": "N-Spindle LOGO",
+        "order": 2,
+        "width": 4,
+        "height": 3,
+        "format": "<div style=\"text-align:center;\">\n    <img src=\"/N-Spindle/image1.png\" style=\"max-width:120px; height:130%; object-fit:contain; margin:0; padding:0;\"/>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 610,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c74e7e1f7cf31649",
+        "type": "ui_template",
+        "z": "tab_mixer_kpi",
+        "group": "ui_grp_kpi",
+        "name": "Flow Simulation",
+        "order": 18,
+        "width": 6,
+        "height": 5,
+        "format": "<div style=\"text-align:center; margin:1px;\">\n    <img src=\"/N-Spindle/image2.gif\" style=\"max-width:100%; height:100%;\">\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 600,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "94e7eef20cfd0676",
+        "type": "ui_template",
+        "z": "tab_mixer_kpi",
+        "group": "ui_grp_kpi",
+        "name": "KPI Bar",
+        "order": 17,
+        "width": 6,
+        "height": 6,
+        "format": "<!-- KPI Bars (vertical slim bars) -->\n<div class=\"kpi-bars\">\n  <div class=\"bars\">\n    <div class=\"bar\" ng-repeat=\"b in bars\">\n      <div class=\"track\">\n        <div class=\"fill\" ng-style=\"{'height': b.pct + '%', 'background': b.color}\"></div>\n      </div>\n      <div class=\"value\">{{b.value}}{{b.unit ? (' ' + b.unit) : ''}}</div>\n      <div class=\"label\">{{b.label}}</div>\n    </div>\n  </div>\n\n  <div class=\"cls-badge\" ng-if=\"classification\">\n    {{classification}}\n  </div>\n</div>\n\n<style>\n  .kpi-bars {\n    padding: 0px 4px 0px;  /* ← 上下 padding 缩小 */\n    margin: 0;             /* ← 避免额外外边距 */\n}\n.kpi-bars .bars{\n    display:flex; \n    gap:8px;               /* ← bar 与 bar 之间更靠近 */\n    justify-content:space-around; \n    align-items:flex-end;\n    margin: 0;             /* ← 清除默认 margin */\n    padding: 0;            /* ← 清除默认 padding */\n}\n  .kpi-bars .bar{\n    width: 48px; text-align:center; color:#eee; font-size:10px;\n  }\n  .kpi-bars .track{\n    width: 10px;             /* 柱条更瘦 */\n    height: 150px;           /* 柱条高度，可调大一点更秀气 */\n    margin: 0 auto 6px;\n    background:#2a2a2a; border-radius:6px; position:relative; overflow:hidden;\n    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.06);\n  }\n  .kpi-bars .fill{\n    position:absolute; bottom:0; left:0; right:0;\n    border-radius:6px;\n    transition: height .35s ease;\n  }\n  .kpi-bars .value{\n    font-weight:700; margin-bottom:2px; white-space:nowrap;\n    font-size:10px;\n  }\n  .kpi-bars .label{\n    line-height:1.1; font-size:10px;\n  }\n  .kpi-bars .cls-badge{\n    margin-top:10px; display:inline-block; padding:4px 10px; border-radius:999px;\n    background:#374151; color:#fff; font-weight:700; letter-spacing:.2px;\n  }\n</style>\n\n<script>\n(function(scope){\n  scope.bars = [];\n  scope.classification = \"\";\n\n  scope.$watch('msg', function(m){\n    if(!m || !m.payload) return;\n\n    // 接收 fn 的第二口 {payload:{bars:[], classification:''}}\n    if (m.payload.bars && Array.isArray(m.payload.bars)){\n      scope.bars = m.payload.bars.map(function(it){\n        var min = Number(it.min)||0, max = Number(it.max)||1;\n        var v = Number(it.value)||0;\n        var pct = ((v - min) / (max - min)) * 100;\n        pct = Math.max(0, Math.min(100, pct));\n        return {\n          label: it.label,\n          value: it.value,\n          unit:  it.unit || \"\",\n          color: it.color || \"#49a6ff\",\n          pct:   pct\n        };\n      });\n    }\n    if (typeof m.payload.classification === 'string'){\n      scope.classification = m.payload.classification;\n    }\n  });\n})(scope);\n</script>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 600,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_N11",
+        "type": "ui_text_input",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "label": "Propeller Qty",
+        "tooltip": "Number of propellers on the shaft (manual key in)",
+        "group": "ui_grp_kpi",
+        "order": 8,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "sendOnBlur": true,
+        "className": "kpi-input",
+        "topicType": "msg",
+        "x": 110,
+        "y": 420,
+        "wires": [
+            [
+                "fn_store_N11_qty"
+            ]
+        ]
+    },
+    {
+        "id": "fn_store_N11_qty",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "store N11 (prop qty)",
+        "func": "// 安全解析：去逗号/空白，只接受正数（>=1）\nconst raw = (msg.payload ?? '').toString().trim().replace(/,/g, '');\nif (raw === '') return null;\nconst n = Number(raw);\nif (!Number.isFinite(n) || n <= 0) return null;   // 非法就忽略\n\n// 读/写 settings\nlet s = flow.get('settings') || { N11:1, N12:415, rho:1000, kPF:0.9, pumpK:0.67 };\ns.N11 = n;                     // ← 更新叶轮数量\nflow.set('settings', s);\nreturn null;                   // 不继续下游\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8cc74fc4a07fcc32",
+        "type": "ui_button",
+        "z": "tab_mixer_kpi",
+        "name": "",
+        "group": "ui_grp_kpi",
+        "order": 15,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "RESET",
+        "tooltip": "Clear all inputs",
+        "color": "#ffffff",
+        "bgcolor": "#ef4444",
+        "className": "",
+        "icon": "fa-undo",
+        "payload": "reset",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 100,
+        "y": 540,
+        "wires": [
+            [
+                "668fc12b8f349994"
+            ]
+        ]
+    },
+    {
+        "id": "668fc12b8f349994",
+        "type": "function",
+        "z": "tab_mixer_kpi",
+        "name": "clear all inputs",
+        "func": "// 清空 flow 中的输入缓存\n['N5','N7','N9','N13','N14'].forEach(k => flow.set(k, undefined));\n\n// Propeller Qty 恢复默认 1\nlet s = flow.get('settings') || { N11:1, N12:415, rho:1000, kPF:0.9, pumpK:0.67 };\ns.N11 = 1;\nflow.set('settings', s);\n\n// 发给输入框 → 空字符串，清掉界面值\nconst msgClearInputs = { payload: \"\" };\n\n// 发给结果 → 空对象，清掉文字\nconst msgClearResult = { payload: {} };\n\n// 发给 KPI Bar → 空数组，清掉柱条\nconst msgClearBars = { payload: { bars: [], classification: \"\" } };\n\n// 输出 1: 给输入框\n// 输出 2: 给 result + bar（用数组一次性发两条）\nreturn [ msgClearInputs, [ msgClearResult, msgClearBars ] ];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 540,
+        "wires": [
+            [
+                "ui_N5",
+                "ui_N7",
+                "ui_N9",
+                "ui_N14",
+                "ui_N13",
+                "ui_N11"
+            ],
+            [
+                "ui_result",
+                "94e7eef20cfd0676"
+            ]
+        ]
+    },
+    {
+        "id": "5fa86a296f8cd31d",
+        "type": "ui_spacer",
+        "z": "tab_mixer_kpi",
+        "name": "spacer",
+        "group": "ui_grp_kpi",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2df2a68198d45abf",
+        "type": "ui_spacer",
+        "z": "tab_mixer_kpi",
+        "name": "spacer",
+        "group": "ui_grp_kpi",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "77f3c7465531c63f",
+        "type": "ui_spacer",
+        "z": "tab_mixer_kpi",
+        "name": "spacer",
+        "group": "ui_grp_kpi",
+        "order": 4,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "3f7940e928231b23",
+        "type": "ui_spacer",
+        "z": "tab_mixer_kpi",
+        "name": "spacer",
+        "group": "ui_grp_kpi",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "d6bce2c13ebb2bd4",
+        "type": "ui_spacer",
+        "z": "tab_mixer_kpi",
+        "name": "spacer",
+        "group": "ui_grp_kpi",
+        "order": 6,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "149ba79e081be04e",
+        "type": "ui_spacer",
+        "z": "tab_mixer_kpi",
+        "name": "spacer",
+        "group": "ui_grp_kpi",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "ui_grp_kpi",
+        "type": "ui_group",
+        "name": "Mixer Key Performance Indicators (KPI)",
+        "tab": "ui_tab_mixer",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ui_tab_mixer",
+        "type": "ui_tab",
+        "name": "N-Spindle",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "e42aad57afc54c91",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
